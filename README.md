@@ -41,3 +41,6 @@ the only valid direction is forward, the script will report a negative value if 
 
 ## Authors
 **Van Ziegelstein** - Creator and Maintainer
+
+## License
+This tool is licensed under the [MIT License](LICENSE).
