@@ -44,9 +44,8 @@ void curses_init(void) {
 
 void usage(void) {
 
-   std::cout << "This is a small utility to track writing progress.\n"
-                "Its main purpose is to help with writing sprints.\n"
-                "The basic usage is:\n"
+   std::cout << "A small utility to track writing progress.\n"
+                "Basic usage:\n"
 		<< PROG_NAME
 		<< " -f <path-to-manuscript> -t <sprint-time-in-minutes>\n\n";
 		
