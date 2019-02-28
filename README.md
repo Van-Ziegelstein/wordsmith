@@ -1,6 +1,10 @@
 # Wordsmith
 Command line utility to aid in writing sprints.
 
+| Sit Down | And Write |
+| --- | --- |
+| <img src="screenshots/sprint1.png"> | <img src="screenshots/sprint2.png"> |
+
 ## Purpose
 
 This is a simple tool to "benchmark" writing speed over a given time period.
