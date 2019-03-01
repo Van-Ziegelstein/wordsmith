@@ -37,6 +37,7 @@ the only valid direction is forward, the script will report a negative value if 
 
 ## Limitations
 * No GUI (obviously). There might be a Qt version in the future.
+* No parsing routines for PDF or doc files (yet).
 * Windows is currently not supported.
 
 ## Authors
