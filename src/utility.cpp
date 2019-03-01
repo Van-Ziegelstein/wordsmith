@@ -4,20 +4,34 @@
 #include <chrono>
 #include <thread>
 #include <cstdlib>
-
+#include <csignal>
 
 namespace sprint {
 
 void exit_cleanup(int sig) {
 
+  int status;
+
   if (has_colors())
       attroff(COLOR_PAIR(TIMER_COLOR));
 
-  printw("\n\nAborted!\n");
+
+  if (sig == SIGABRT) {
+
+     printw("\n\nWhoops a problem occured.\n");
+     status = EXIT_FAILURE;
+  }   
+  else {
+
+     printw("\n\nAborted!\n");   
+     status = EXIT_SUCCESS;
+  }
+
   refresh();
   std::this_thread::sleep_for(std::chrono::seconds(1)); 
   endwin();
-  exit(EXIT_SUCCESS);
+
+  exit(status);
 
 }
 

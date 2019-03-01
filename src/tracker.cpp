@@ -1,4 +1,5 @@
 #include "tracker.h"
+#include <csignal>
 
 
 namespace sprint {
@@ -72,6 +73,16 @@ int content_watch::speed_estimate(int duration) {
        
 }
 
+
+void content_watch::resync(std::string doc_name) {
+
+     stream_src.close();
+     stream_src.open(doc_name);
+
+     if (stream_src.fail())
+        raise(SIGABRT);
+
+}
 
 content_watch::content_watch(std::ifstream& file) : word_it(file), stream_src(file)  { 
       

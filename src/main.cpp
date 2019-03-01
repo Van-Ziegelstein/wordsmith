@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
   sprint::curses_init();
   signal(SIGINT, sprint::exit_cleanup);
   signal(SIGTERM, sprint::exit_cleanup);
+  signal(SIGABRT, sprint::exit_cleanup);
 
 
   printw("File: %s\nCurrent word count: %d\n\n", file_name.c_str(), text.word_count());
@@ -123,6 +124,10 @@ int main(int argc, char *argv[]) {
      key = getch();
    
   } while (key != 'c');
+
+
+  // In some situations, the istream won't be updated without explicitly reopening it.
+  text.resync(file_path);
 
   printw("New word count: %d\nWords added: %d\nAverage speed: %d words per hour\n", text.word_count(), text.words_added(), text.speed_estimate(sprint_duration)); 
   refresh();

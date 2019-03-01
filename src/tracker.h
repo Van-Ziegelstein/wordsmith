@@ -36,6 +36,7 @@ class content_watch {
    int word_count();
    int words_added();
    int speed_estimate(int duration);
+   void resync(std::string doc_name);
    content_watch(std::ifstream& file); 
 
 };
