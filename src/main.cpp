@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
   }
 
   file_name = file_path.substr(file_path.find_last_of("/\\") + 1);
-  sprint::content_watch text(document);  
+  sprint::plain_mon text(document);  
   
   sprint::curses_init();
   signal(SIGINT, sprint::exit_cleanup);

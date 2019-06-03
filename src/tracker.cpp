@@ -40,7 +40,7 @@ int time_frags::is_finished() {
 }
 
 
-int content_watch::word_count() {
+int plain_mon::word_count() {
 
     int word_total = std::distance(word_it, end);
     stream_src.clear();
@@ -50,7 +50,7 @@ int content_watch::word_count() {
 }
 
 
-int content_watch::words_added () {
+int plain_mon::words_added () {
 
     int current_words = word_count();
 
@@ -62,7 +62,7 @@ int content_watch::words_added () {
 }
 
 
-int content_watch::speed_estimate(int duration) {
+int plain_mon::speed_estimate(int duration) {
 
     int new_words = words_added();
 
@@ -74,7 +74,7 @@ int content_watch::speed_estimate(int duration) {
 }
 
 
-void content_watch::resync(std::string doc_name) {
+void plain_mon::resync(std::string doc_name) {
 
      stream_src.close();
      stream_src.open(doc_name);
@@ -84,7 +84,7 @@ void content_watch::resync(std::string doc_name) {
 
 }
 
-content_watch::content_watch(std::ifstream& file) : word_it(file), stream_src(file)  { 
+plain_mon::plain_mon(std::ifstream& file) : word_it(file), stream_src(file)  { 
       
      beginning = file.tellg(); 
      start_words = word_count(); 
