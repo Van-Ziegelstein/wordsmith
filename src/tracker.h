@@ -31,14 +31,17 @@ class plain_mon {
    std::ifstream doc_stream;
    std::istream_iterator<std::string> word_it, end;
    std::streampos beginning;
+
+ protected:  
    int start_words;
 
  public:
-   int word_count();
+   virtual int word_count();
    int words_added();
    int speed_estimate(int duration);
-   void resync();
+   virtual void resync();
    plain_mon(const std::string& doc_name); 
+   virtual ~plain_mon() { }
 
 };
 
