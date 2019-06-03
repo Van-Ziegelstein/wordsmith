@@ -1,8 +1,8 @@
 #include "tracker.h"
 #include <csignal>
 
-
 namespace sprint {
+
 
 void time_frags::breakup(const std::chrono::seconds& timestamp) {
 
@@ -43,14 +43,14 @@ int time_frags::is_finished() {
 int plain_mon::word_count() {
 
     int word_total = std::distance(word_it, end);
-    stream_src.clear();
-    stream_src.seekg(beginning);
+    doc_stream.clear();
+    doc_stream.seekg(beginning);
     return word_total;
 
 }
 
 
-int plain_mon::words_added () {
+int plain_mon::words_added() {
 
     int current_words = word_count();
 
@@ -74,19 +74,22 @@ int plain_mon::speed_estimate(int duration) {
 }
 
 
-void plain_mon::resync(std::string doc_name) {
+void plain_mon::resync() {
 
-     stream_src.close();
-     stream_src.open(doc_name);
+     doc_stream.close();
+     doc_stream.open(doc);
 
-     if (stream_src.fail())
+     if (doc_stream.fail())
         raise(SIGABRT);
 
 }
 
-plain_mon::plain_mon(std::ifstream& file) : word_it(file), stream_src(file)  { 
-      
-     beginning = file.tellg(); 
+plain_mon::plain_mon(const std::string& doc_name) : doc(doc_name), doc_stream(doc_name), word_it(doc_stream) { 
+
+     if (doc_stream.fail())
+        throw "Bad input file.";
+ 
+     beginning = doc_stream.tellg(); 
      start_words = word_count(); 
      
 }

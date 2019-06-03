@@ -5,6 +5,7 @@
 #include <curses.h>
 #include <csignal>
 #include <cstdlib>
+#include <exception>
 #include "utility.h"
 #include "tracker.h"
 
@@ -15,6 +16,7 @@ int main(int argc, char *argv[]) {
   int cmd_opt, x_pos, y_pos, key, sprint_duration = 0;
   std::string file_path, file_name;
   std::chrono::seconds time_frame;
+  sprint::plain_mon* text;
 
 
   if (argc == 1) {
@@ -68,27 +70,25 @@ int main(int argc, char *argv[]) {
 
   }
 
-  
   sprint::time_frags timer(sprint_duration);
-  std::ifstream document(file_path);
+  file_name = file_path.substr(file_path.find_last_of("/\\") + 1);
 
-  if (! document) {
 
-     std::cout << "Couldn't open file" << std::endl;
-     exit(EXIT_FAILURE);     
-
+  try {
+      text = new sprint::plain_mon(file_path);  
+  }
+  catch (const char *e) {
+      std::cout << "Exception: " << e << std::endl;
+      exit(EXIT_FAILURE);
   }
 
-  file_name = file_path.substr(file_path.find_last_of("/\\") + 1);
-  sprint::plain_mon text(document);  
-  
   sprint::curses_init();
   signal(SIGINT, sprint::exit_cleanup);
   signal(SIGTERM, sprint::exit_cleanup);
   signal(SIGABRT, sprint::exit_cleanup);
 
 
-  printw("File: %s\nCurrent word count: %d\n\n", file_name.c_str(), text.word_count());
+  printw("File: %s\nCurrent word count: %d\n\n", file_name.c_str(), text->word_count());
   getyx(stdscr, y_pos, x_pos);
 
   if (has_colors())
@@ -127,12 +127,13 @@ int main(int argc, char *argv[]) {
 
 
   // In some situations, the istream won't be updated without explicitly reopening it.
-  text.resync(file_path);
+  text->resync();
 
-  printw("New word count: %d\nWords added: %d\nAverage speed: %d words per hour\n", text.word_count(), text.words_added(), text.speed_estimate(sprint_duration)); 
+  printw("New word count: %d\nWords added: %d\nAverage speed: %d words per hour\n", text->word_count(), text->words_added(), text->speed_estimate(sprint_duration)); 
   refresh();
 
   getch();
   endwin();  
+  delete text;
 
 }

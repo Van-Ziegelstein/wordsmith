@@ -27,17 +27,18 @@ class time_frags {
 
 class plain_mon {
 
+   const std::string& doc;
+   std::ifstream doc_stream;
    std::istream_iterator<std::string> word_it, end;
    std::streampos beginning;
-   std::ifstream& stream_src;
    int start_words;
 
  public:
    int word_count();
    int words_added();
    int speed_estimate(int duration);
-   void resync(std::string doc_name);
-   plain_mon(std::ifstream& file); 
+   void resync();
+   plain_mon(const std::string& doc_name); 
 
 };
 
