@@ -5,7 +5,6 @@
 #include <curses.h>
 #include <csignal>
 #include <cstdlib>
-#include <exception>
 #include "utility.h"
 #include "tracker.h"
 
@@ -73,21 +72,12 @@ int main(int argc, char *argv[]) {
   sprint::time_frags timer(sprint_duration);
   file_name = file_path.substr(file_path.find_last_of("/\\") + 1);
 
-
-  try {
-      text = new sprint::plain_mon(file_path);  
-  }
-  catch (const char *e) {
-      std::cout << "Exception: " << e << std::endl;
-      exit(EXIT_FAILURE);
-  }
-
   sprint::curses_init();
   std::signal(SIGINT, sprint::exit_cleanup);
   std::signal(SIGTERM, sprint::exit_cleanup);
   std::signal(SIGABRT, sprint::exit_cleanup);
 
-
+  text = new sprint::odf_mon(file_path);  
   printw("File: %s\nCurrent word count: %d\n\n", file_name.c_str(), text->word_count());
   getyx(stdscr, y_pos, x_pos);
 
