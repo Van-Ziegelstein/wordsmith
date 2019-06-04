@@ -83,12 +83,12 @@ int main(int argc, char *argv[]) {
 
   switch(filetype) {
 
-     case sprint::plain:
-     text = new sprint::plain_mon(file_path);
-     break;
-
      case sprint::zip:
      text = new sprint::odf_mon(file_path);  
+     break;
+
+     default:
+     text = new sprint::plain_mon(file_path);
      break;
 
   }
