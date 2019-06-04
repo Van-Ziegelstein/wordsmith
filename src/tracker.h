@@ -32,19 +32,14 @@ class time_frags {
 
 class plain_mon {
 
-   const std::string& doc;
-   std::ifstream doc_stream;
-   std::istream_iterator<std::string> word_it, end;
-   std::streampos beginning;
-
  protected:  
+   const std::string& doc;
    int start_words;
 
  public:
    virtual int word_count();
    int words_added();
    int speed_estimate(int duration);
-   virtual void resync();
    plain_mon(const std::string& doc_name); 
    plain_mon() : doc("NONE") { }
    virtual ~plain_mon() { }
@@ -68,7 +63,6 @@ class odf_mon : public plain_mon {
    odf_mon(const std::string& doc_name);  
    ~odf_mon();
    int word_count();
-   void resync();
 };
 
 

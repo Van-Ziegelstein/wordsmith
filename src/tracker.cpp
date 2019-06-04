@@ -1,6 +1,6 @@
 #include "tracker.h"
 #include <csignal>
-#include <stdlib.h>
+#include <cstdlib>
 
 namespace sprint {
 
@@ -43,9 +43,14 @@ int time_frags::is_finished() {
 
 int plain_mon::word_count() {
 
+    std::ifstream doc_stream(doc);
+
+    if (doc_stream.fail())
+       std::raise(SIGABRT);
+
+    std::istream_iterator<std::string> word_it(doc_stream), end;
     int word_total = std::distance(word_it, end);
-    doc_stream.clear();
-    doc_stream.seekg(beginning);
+    doc_stream.close();
     return word_total;
 
 }
@@ -75,23 +80,8 @@ int plain_mon::speed_estimate(int duration) {
 }
 
 
-void plain_mon::resync() {
+plain_mon::plain_mon(const std::string& doc_name) : doc(doc_name) { 
 
-     doc_stream.close();
-     doc_stream.open(doc);
-
-     if (doc_stream.fail())
-        raise(SIGABRT);
-
-}
-
-
-plain_mon::plain_mon(const std::string& doc_name) : doc(doc_name), doc_stream(doc_name), word_it(doc_stream) { 
-
-     if (doc_stream.fail())
-        throw "Bad input file.";
- 
-     beginning = doc_stream.tellg(); 
      start_words = word_count(); 
      
 }
@@ -155,20 +145,10 @@ int odf_mon::word_count() {
      extract_wcount_xml();          
      
      if (wcount_m.empty() || wcount_m.size() < 2)
-        raise(SIGABRT);
+        std::raise(SIGABRT);
 
      return std::atoi(wcount_m.str(1).c_str());
 
-}
-
-
-void odf_mon::resync() {
-
-     zip_fclose(metafile);
-     metafile = zip_fopen(archive, "meta.xml", 0);
-
-     if (!metafile)
-        raise(SIGABRT);
 }
 
 
