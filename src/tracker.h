@@ -1,9 +1,14 @@
 #ifndef WRITE_OR_DIE
 #define WRITE_OR_DIE
 
+#include <string>
 #include <chrono>
 #include <fstream>
 #include <iterator>
+#include <regex>
+#include <ctime>
+#include <vector>
+#include <zip.h>
 
 
 namespace sprint {
@@ -41,8 +46,29 @@ class plain_mon {
    int speed_estimate(int duration);
    virtual void resync();
    plain_mon(const std::string& doc_name); 
+   plain_mon() : doc("NONE") { }
    virtual ~plain_mon() { }
 
+};
+
+
+class odf_mon : public plain_mon {
+   
+   std::regex wcount_reg;
+   std::smatch wcount_m;
+   std::time_t old_atime;
+   std::vector<char> meta_content; 
+   zip_t *archive;
+   zip_stat_t meta_fparams;
+   zip_file_t *metafile;
+
+   void extract_wcount_xml();
+ 
+ public:
+   odf_mon(const std::string& doc_name);  
+   ~odf_mon();
+   int word_count();
+   void resync();
 };
 
 
