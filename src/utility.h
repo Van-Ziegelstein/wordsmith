@@ -8,9 +8,13 @@
 
 namespace sprint {
 
+enum docformat { plain, zip };
+
 void curses_init(void);
 
 void exit_cleanup(int sig);
+
+docformat check_doctype(const std::string& fpath);
 
 void usage(void);
 

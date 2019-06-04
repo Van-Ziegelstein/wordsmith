@@ -1,7 +1,6 @@
 #include <iostream>
 #include <thread>
 #include <sstream>
-#include <fstream>
 #include <unistd.h>
 #include <curses.h>
 #include <csignal>
@@ -17,6 +16,7 @@ int main(int argc, char *argv[]) {
   std::string file_path, file_name;
   std::chrono::seconds time_frame;
   sprint::plain_mon* text;
+  sprint::docformat filetype;
 
 
   if (argc == 1) {
@@ -70,6 +70,7 @@ int main(int argc, char *argv[]) {
 
   }
 
+
   sprint::time_frags timer(sprint_duration);
   file_name = file_path.substr(file_path.find_last_of("/\\") + 1);
 
@@ -78,7 +79,20 @@ int main(int argc, char *argv[]) {
   std::signal(SIGTERM, sprint::exit_cleanup);
   std::signal(SIGABRT, sprint::exit_cleanup);
 
-  text = new sprint::odf_mon(file_path);  
+  filetype = sprint::check_doctype(file_path);
+
+  switch(filetype) {
+
+     case sprint::plain:
+     text = new sprint::plain_mon(file_path);
+     break;
+
+     case sprint::zip:
+     text = new sprint::odf_mon(file_path);  
+     break;
+
+  }
+
   printw("File: %s\nCurrent word count: %d\n\n", file_name.c_str(), text->word_count());
   getyx(stdscr, y_pos, x_pos);
 
