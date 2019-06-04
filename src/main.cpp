@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <sstream>
+#include <fstream>
 #include <unistd.h>
 #include <curses.h>
 #include <csignal>

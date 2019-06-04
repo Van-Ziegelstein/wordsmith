@@ -1,4 +1,6 @@
 #include "tracker.h"
+#include <fstream>
+#include <iterator>
 #include <csignal>
 #include <zip.h>
 
