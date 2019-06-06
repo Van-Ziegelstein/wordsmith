@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <csignal>
 #include <string.h>
+#include <magic.h>
 
 namespace sprint {
 
@@ -60,25 +61,42 @@ void curses_init(void) {
 
 docformat check_doctype(const std::string& fpath) {
 
-  unsigned char filesig[4] = {0};
-  const unsigned char zipmagic[4] = { 0x50, 0x4B, 0x03, 0x04 };
-  docformat ftype = plain;
+  docformat ftype;
+  magic_t cookie = magic_open(MAGIC_MIME_TYPE | MAGIC_ERROR);
 
+  if (!cookie) {
 
-  std::ifstream raw_file(fpath, std::ios::binary);
-
-  if (raw_file.fail()) {
-
-     std::cout << "Couldn't open input file" << std::endl;
+     std::cout << "Could not allocate magic cookie." << std::endl;
      exit(EXIT_FAILURE);
 
   }
 
-  raw_file.read((char *)filesig, 4);
+  if (magic_load(cookie, NULL) != 0) {
 
-  if (memcmp(filesig, zipmagic, sizeof(filesig)) == 0)
-     ftype = zip;
+     std::cout << "Error: " << magic_error(cookie) << std::endl;
+     exit(EXIT_FAILURE);
 
+  }
+
+  const char *mimetype = magic_file(cookie, fpath.c_str());
+
+  if (!mimetype) {
+     
+     std::cout << "Error: " << magic_error(cookie) << std::endl;
+     exit(EXIT_FAILURE);
+
+  }
+
+
+  if (strncmp(mimetype, "application/vnd.oasis.opendocument.text", strlen(mimetype)) == 0)
+     ftype = odt;
+  else if (strncmp(mimetype, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", strlen(mimetype)) == 0)
+     ftype = docx;
+  else
+     ftype = plain;
+
+  magic_close(cookie);
+  
   return ftype;
 
 }

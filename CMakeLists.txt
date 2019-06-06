@@ -13,7 +13,11 @@ include_directories(${CURSES_INCLUDE_DIR})
 find_package(LibZip REQUIRED)
 include_directories(${LIBZIP_INCLUDE_DIRS})
 
+find_package(LibMagic REQUIRED)
+include_directories(${LIBMAGIC_INCLUDE_DIRS})
+
+
 add_executable(wordsmith ${SOURCES})
-target_link_libraries(wordsmith ${CURSES_LIBRARIES} ${LIBZIP_LIBRARIES})
+target_link_libraries(wordsmith ${CURSES_LIBRARIES} ${LIBZIP_LIBRARIES} ${LIBMAGIC_LIBRARIES})
 
 install(TARGETS wordsmith DESTINATION bin)

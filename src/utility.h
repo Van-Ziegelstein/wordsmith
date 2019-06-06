@@ -8,7 +8,7 @@
 
 namespace sprint {
 
-enum docformat { plain, zip };
+enum docformat { plain, odt, docx };
 
 void curses_init(void);
 

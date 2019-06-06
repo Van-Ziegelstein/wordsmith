@@ -73,18 +73,22 @@ int main(int argc, char *argv[]) {
 
   sprint::time_frags timer(sprint_duration);
   file_name = file_path.substr(file_path.find_last_of("/\\") + 1);
+  filetype = sprint::check_doctype(file_path);
 
   sprint::curses_init();
   std::signal(SIGINT, sprint::exit_cleanup);
   std::signal(SIGTERM, sprint::exit_cleanup);
   std::signal(SIGABRT, sprint::exit_cleanup);
 
-  filetype = sprint::check_doctype(file_path);
 
   switch(filetype) {
 
-     case sprint::zip:
+     case sprint::odt:
      text = new sprint::odf_mon(file_path);  
+     break;
+
+     case sprint::docx:
+     text = new sprint::docx_mon(file_path);  
      break;
 
      default:
