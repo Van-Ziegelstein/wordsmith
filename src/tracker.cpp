@@ -3,6 +3,7 @@
 #include <iterator>
 #include <csignal>
 #include <zip.h>
+#include <algorithm>
 
 namespace sprint {
 
@@ -90,6 +91,7 @@ plain_mon::plain_mon(const std::string& doc_name) : doc(doc_name), start_words(-
 
 plain_mon::~plain_mon() { }
 
+
 odf_mon::odf_mon(const std::string& doc_name) : plain_mon(doc_name), wcount_reg("meta:word-count=\"([[:digit:]]+)\""), old_atime(0) { }
 
 odf_mon::odf_mon(const std::string& doc_name, const char *wmeta_reg) : plain_mon(doc_name), wcount_reg(wmeta_reg), old_atime(0) { }
@@ -144,10 +146,61 @@ int odf_mon::word_count() {
     return get_wordmeta("meta.xml");
 }
 
+
 docx_mon::docx_mon(const std::string& doc_name) : odf_mon(doc_name, "<Words>([[:digit:]]+)<") { }
 
 int docx_mon::word_count() {
     return get_wordmeta("docProps/app.xml");
+}
+
+
+tex_mon::tex_mon(const std::string& doc_name) : plain_mon(doc_name) { }
+
+
+tex_mon::markup_filter::markup_filter() : word_num(0), meat_start(false), meat_end(false) { }
+
+
+void tex_mon::markup_filter::operator() (const std::string& word) {
+
+    if (word.compare("\\begin{document}") == 0)
+       meat_start = true;
+
+    if (word.compare("\\end{document}") == 0)
+       tex_mon::markup_filter::meat_end = true;
+        
+    if (meat_start && !meat_end &&
+        !std::regex_match(word, std::regex(R"(\\[[:alpha:]]+\{?.*|^%.*)"))) {
+       
+       tex_mon::markup_filter::word_num++;
+
+    }
+
+}
+
+
+int tex_mon::markup_filter::get_total() {
+    return word_num;
+}
+
+
+int tex_mon::word_count() {
+
+    std::ifstream doc_stream(doc);
+
+    if (doc_stream.fail())
+       std::raise(SIGABRT);
+
+    std::istream_iterator<std::string> first_w(doc_stream), last_w;
+
+    int word_total = std::for_each(first_w, last_w, markup_filter()).get_total();
+
+    doc_stream.close();
+
+    if (start_words == -1)
+       start_words = word_total;
+
+    return word_total;
+
 }
 
 

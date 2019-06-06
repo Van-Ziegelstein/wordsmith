@@ -92,6 +92,8 @@ docformat check_doctype(const std::string& fpath) {
      ftype = odt;
   else if (strncmp(mimetype, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", strlen(mimetype)) == 0)
      ftype = docx;
+  else if (strncmp(mimetype, "text/x-tex", strlen(mimetype)) == 0)
+     ftype = tex;
   else
      ftype = plain;
 

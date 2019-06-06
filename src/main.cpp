@@ -91,6 +91,10 @@ int main(int argc, char *argv[]) {
      text = new sprint::docx_mon(file_path);  
      break;
 
+     case sprint::tex:
+     text = new sprint::tex_mon(file_path);
+     break;
+
      default:
      text = new sprint::plain_mon(file_path);
      break;

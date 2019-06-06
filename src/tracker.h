@@ -68,6 +68,27 @@ class docx_mon : public odf_mon {
 
 };
 
+
+class tex_mon : public plain_mon {
+
+   class markup_filter {
+
+         int word_num;
+         bool meat_start, meat_end;
+  
+     public:
+         markup_filter();
+	 void operator() (const std::string& word);
+	 int get_total();
+
+   };
+
+ public:
+   tex_mon(const std::string& doc_name);
+   int word_count();
+
+};
+
 }
 
 #endif
