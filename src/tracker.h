@@ -76,7 +76,6 @@ class tex_mon : public plain_mon {
 
  public:
    tex_mon(const std::string& doc_name);
-   int word_count();
 
 };
 

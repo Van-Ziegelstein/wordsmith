@@ -186,9 +186,5 @@ int tex_mon::filter_words(std::istream_iterator<std::string>& first_w, std::istr
     return word_num;
 }
 
-int tex_mon::word_count() {
-    return plain_mon::word_count();
-}
-
 
 }
