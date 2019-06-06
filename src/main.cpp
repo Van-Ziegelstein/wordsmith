@@ -138,8 +138,8 @@ int main(int argc, char *argv[]) {
    
   } while (key != 'c');
 
-
-  printw("New word count: %d\nWords added: %d\nAverage speed: %d words per hour\n", text->word_count(), text->words_added(), text->speed_estimate(sprint_duration)); 
+  printw("New word count: %d\nWords added: %d\nAverage speed: %d words per hour\n", 
+         text->word_count(), text->words_added(), text->speed_estimate(sprint_duration)); 
   refresh();
 
   getch();
