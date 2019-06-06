@@ -44,6 +44,11 @@ int time_frags::is_finished() {
 }
 
 
+int plain_mon::filter_words(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w) {
+    return std::distance(first_w, last_w);
+}
+
+
 int plain_mon::word_count() {
 
     std::ifstream doc_stream(doc);
@@ -52,8 +57,7 @@ int plain_mon::word_count() {
        std::raise(SIGABRT);
 
     std::istream_iterator<std::string> word_it(doc_stream), end;
-    int word_total = std::distance(word_it, end);
-    doc_stream.close();
+    int word_total = filter_words(word_it, end);
 
     if (start_words == -1)
        start_words = word_total;
@@ -157,50 +161,33 @@ int docx_mon::word_count() {
 tex_mon::tex_mon(const std::string& doc_name) : plain_mon(doc_name) { }
 
 
-tex_mon::markup_filter::markup_filter() : word_num(0), meat_start(false), meat_end(false) { }
+int tex_mon::filter_words(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w) {
 
+    int word_num = 0;
+    bool meat_start = false, meat_end = false;
 
-void tex_mon::markup_filter::operator() (const std::string& word) {
+    std::for_each(first_w, last_w, [&] (const std::string word) {
 
-    if (word.compare("\\begin{document}") == 0)
-       meat_start = true;
+          if (word.compare("\\begin{document}") == 0)
+              meat_start = true;
 
-    if (word.compare("\\end{document}") == 0)
-       tex_mon::markup_filter::meat_end = true;
+          if (word.compare("\\end{document}") == 0)
+              meat_end = true;
         
-    if (meat_start && !meat_end &&
-        !std::regex_match(word, std::regex(R"(\\[[:alpha:]]+\{?.*|^%.*)"))) {
+          if (meat_start && !meat_end &&
+              !std::regex_match(word, std::regex(R"(\\[[:alpha:]]+\{?.*|^%.*)"))) {
        
-       tex_mon::markup_filter::word_num++;
+             word_num++;
 
-    }
+          }
 
-}
+    });
 
-
-int tex_mon::markup_filter::get_total() {
     return word_num;
 }
 
-
 int tex_mon::word_count() {
-
-    std::ifstream doc_stream(doc);
-
-    if (doc_stream.fail())
-       std::raise(SIGABRT);
-
-    std::istream_iterator<std::string> first_w(doc_stream), last_w;
-
-    int word_total = std::for_each(first_w, last_w, markup_filter()).get_total();
-
-    doc_stream.close();
-
-    if (start_words == -1)
-       start_words = word_total;
-
-    return word_total;
-
+    return plain_mon::word_count();
 }
 
 
