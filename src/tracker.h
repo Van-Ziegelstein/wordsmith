@@ -49,12 +49,24 @@ class odf_mon : public plain_mon {
    std::time_t old_atime;
    std::vector<char> meta_content; 
  
+ protected:
+   odf_mon(const std::string& doc_name, const char *wmeta_reg);
+   int get_wordmeta(const char *metafile);
+
  public:
    odf_mon(const std::string& doc_name);  
    int word_count();
 
 };
 
+
+class docx_mon : public odf_mon {
+
+ public:
+   docx_mon(const std::string& doc_name);    
+   int word_count();
+
+};
 
 }
 

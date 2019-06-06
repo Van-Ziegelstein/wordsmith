@@ -88,57 +88,66 @@ int plain_mon::speed_estimate(int duration) {
 
 plain_mon::plain_mon(const std::string& doc_name) : doc(doc_name), start_words(-1) { }
 
-
 plain_mon::~plain_mon() { }
-
 
 odf_mon::odf_mon(const std::string& doc_name) : plain_mon(doc_name), wcount_reg("meta:word-count=\"([[:digit:]]+)\""), old_atime(0) { }
 
+odf_mon::odf_mon(const std::string& doc_name, const char *wmeta_reg) : plain_mon(doc_name), wcount_reg(wmeta_reg), old_atime(0) { }
+
+int odf_mon::get_wordmeta(const char *metafile) {
+
+    int wcount;
+    std::smatch wcount_m;
+    zip_stat_t meta_fparams;
+    zip_t *archive = zip_open(doc.c_str(), ZIP_RDONLY, NULL);
+     
+    if (!archive)
+       raise(SIGABRT);
+
+    if (zip_name_locate(archive, metafile, 0) == -1)
+       raise(SIGABRT);
+
+    zip_stat(archive, metafile, 0 , &meta_fparams);
+
+    if (old_atime == 0)
+       old_atime = meta_fparams.mtime;
+
+    if (meta_fparams.mtime == old_atime && start_words != -1)
+       return start_words;
+     
+    zip_file_t *meta = zip_fopen(archive, metafile, 0);
+
+    if (!meta)
+       raise(SIGABRT);
+
+    meta_content.resize(meta_fparams.size);
+    zip_fread(meta, meta_content.data(), meta_fparams.size);
+    std::string xml_seq(meta_content.data(), meta_content.size()); 
+          
+    std::regex_search(xml_seq, wcount_m, wcount_reg);
+
+    if (wcount_m.empty() || wcount_m.size() < 2)
+       std::raise(SIGABRT);
+
+    std::istringstream(wcount_m.str(1)) >> wcount;
+    zip_fclose(meta);
+    zip_close(archive);
+
+    if (start_words == -1)
+       start_words = wcount;
+
+    return wcount;
+}
+
 
 int odf_mon::word_count() {
-     
-     int wcount;
-     std::smatch wcount_m;
-     zip_stat_t meta_fparams;
-     zip_t *archive = zip_open(doc.c_str(), ZIP_RDONLY, NULL);
-     
-     if (!archive)
-        raise(SIGABRT);
+    return get_wordmeta("meta.xml");
+}
 
-     if (zip_name_locate(archive, "meta.xml", 0) == -1)
-        raise(SIGABRT);
+docx_mon::docx_mon(const std::string& doc_name) : odf_mon(doc_name, "<Words>([[:digit:]]+)<") { }
 
-     zip_stat(archive, "meta.xml", 0 , &meta_fparams);
-
-     if (old_atime == 0)
-        old_atime = meta_fparams.mtime;
-
-     if (meta_fparams.mtime == old_atime && start_words != -1)
-        return start_words;
-     
-     zip_file_t *metafile = zip_fopen(archive, "meta.xml", 0);
-
-     if (!metafile)
-        raise(SIGABRT);
-
-     meta_content.resize(meta_fparams.size);
-     zip_fread(metafile, meta_content.data(), meta_fparams.size);
-     std::string xml_seq(meta_content.data(), meta_content.size()); 
-          
-     std::regex_search(xml_seq, wcount_m, wcount_reg);
-
-     if (wcount_m.empty() || wcount_m.size() < 2)
-        std::raise(SIGABRT);
-
-     std::istringstream(wcount_m.str(1)) >> wcount;
-     zip_fclose(metafile);
-     zip_close(archive);
-
-     if (start_words == -1)
-        start_words = wcount;
-
-     return wcount;
-
+int docx_mon::word_count() {
+    return get_wordmeta("docProps/app.xml");
 }
 
 
