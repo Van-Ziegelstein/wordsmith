@@ -34,12 +34,12 @@ void time_frags::breakup(const std::chrono::seconds& timestamp) {
 } 
 
 
-int time_frags::is_finished() {
+bool time_frags::is_finished() {
 
     if (total_minutes >= max_time)
-       return 1;
+       return true;
     else
-       return 0;
+       return false;
 
 }
 

@@ -20,7 +20,7 @@ class time_frags {
      int seconds() { return frags[0]; }
      int minutes() { return frags[1]; }
      int hours() { return frags[2]; }
-     int is_finished();
+     bool is_finished();
      void breakup(const std::chrono::seconds& timestamp);
      time_frags(int max) : total_minutes(0), max_time(max), frags() { }
 
