@@ -44,7 +44,7 @@ bool time_frags::is_finished() {
 }
 
 
-int plain_mon::filter_words(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w) {
+int plain_mon::word_filter(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w) {
     return std::distance(first_w, last_w);
 }
 
@@ -57,7 +57,7 @@ int plain_mon::word_count() {
        std::raise(SIGABRT);
 
     std::istream_iterator<std::string> word_it(doc_stream), end;
-    int word_total = filter_words(word_it, end);
+    int word_total = word_filter(word_it, end);
 
     if (start_words == -1)
        start_words = word_total;
@@ -161,7 +161,7 @@ int docx_mon::word_count() {
 tex_mon::tex_mon(const std::string& doc_name) : plain_mon(doc_name) { }
 
 
-int tex_mon::filter_words(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w) {
+int tex_mon::word_filter(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w) {
 
     int word_num = 0;
     bool meat_start = false, meat_end = false;

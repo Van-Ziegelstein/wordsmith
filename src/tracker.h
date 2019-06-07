@@ -32,7 +32,7 @@ class plain_mon {
  protected:  
    const std::string& doc;
    int start_words;
-   virtual int filter_words(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w);
+   virtual int word_filter(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w);
 
  public:
    virtual int word_count();
@@ -72,7 +72,7 @@ class docx_mon : public odf_mon {
 
 class tex_mon : public plain_mon {
 
-   int filter_words(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w);
+   int word_filter(std::istream_iterator<std::string>& first_w, std::istream_iterator<std::string>& last_w);
 
  public:
    tex_mon(const std::string& doc_name);
