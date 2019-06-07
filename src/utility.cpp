@@ -1,6 +1,5 @@
 #include "utility.h"
 #include <iostream>
-#include <fstream>
 #include <curses.h>
 #include <chrono>
 #include <thread>
