@@ -13,8 +13,17 @@ It is targeted at Unix people who get their writing assignments done by
 prefer a minimal console program to some big GUI app. In retrospect this might indeed be
 a very narrow target audience. 
 
+###### Supported Documents
+* Plain Text
+* Odt (OpenOffice)
+* Docx (Microsoft Word)
+* TeX (Experimental, everything between `\begin{document}` and `\end{document}` will be fed through a rudimentary 
+regex filter to skip formating commands.)
+
 ## Dependencies
 * The fancy statistics are implemented via [Ncurses](https://invisible-island.net/ncurses/ncurses.html).
+* [Libmagic](https://www.darwinsys.com/file/) for file identification.
+* [Libzip](https://libzip.org/) for odt and docx files.
 
 ## Installation
 [Cmake](https://cmake.org/) is used to build the program. After extracting the sources the build procedure
@@ -37,7 +46,6 @@ the only valid direction is forward, the script will report a negative value if 
 
 ## Limitations
 * No GUI (obviously). There might be a Qt version in the future.
-* No parsing routines for PDF or doc files (yet).
 * Windows is currently not supported.
 
 ## Authors
