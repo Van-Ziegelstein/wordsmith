@@ -6,6 +6,7 @@
 #include <regex>
 #include <ctime>
 #include <vector>
+#include <iterator>
 
 
 namespace sprint {
